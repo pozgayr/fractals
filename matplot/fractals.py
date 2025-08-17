@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-n = 2_000_000
+n = 1_000_000
 seed = 0
 bg='#0b0b10'
 s = 0.25
-cmap = 'plasma'c
+cmap = 'plasma'
 
 
 def levy_ifs():
@@ -42,8 +42,8 @@ def main():
     ax.axis('off')
     plt.margins(0)
 
-    c = np.linspace(0, 1, len(x))
-    ax.scatter(x, y, c=c, s=s, cmap=cmap, linewidths=0, rasterized=True)
+    h = (np.angle(pts) + np.pi) / (2*np.pi) 
+    ax.scatter(x, y, c=h, s=s, cmap='hsv', linewidths=0, rasterized=True)
     plt.show()
 
 
