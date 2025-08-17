@@ -1,49 +1,59 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+A = np.array([
+    [[0.00, 0.00],[0.00, 0.16]],
+    [[0.85, 0.04],[-0.04, 0.85]],
+    [[0.20,-0.26],[0.23, 0.22]],
+    [[-0.15,0.28],[0.26, 0.24]],
+], dtype=np.float64)
 
-n = 1_000_000
+b = np.array([
+    [0.0, 0.0],
+    [0.0, 1.6],
+    [0.0, 1.6],
+    [0.0, 0.44],
+], dtype=np.float64)
+
+p = np.array([0.01, 0.85, 0.07, 0.07], dtype=np.float64)
+
+n = 500_000
 seed = 0
 bg='#0b0b10'
 s = 0.25
-cmap = 'plasma'
 
 
-def levy_ifs():
+def ifs_chaos(A, b, p):
+    x0=(0.0, 0.0)
     rng = np.random.default_rng(seed)
+    
+    psum = p.sum()
+    p = p / psum
+    cum = np.cumsum(p)
 
-    a1 = (1 + 1j) / 2.0
-    b1 = 0.0 + 0.0j
+    pts = np.empty((n, 2), dtype=np.float64)
+    x = np.array(x0, dtype=np.float64)
 
-    a2 = (1 - 1j) / 2.0
-    b2 = (1 + 1j) / 2.0
-
-    p1 = 0.5
-    z = 0.0 + 0.0j
-
-    pts = np.empty(n, dtype=np.complex128)
     for i in range(n):
-        if rng.random() < p1:
-            z = a1 * z + b1
-        else:
-            z = a2 * z + b2
-        pts[i] = z
-
+        k = int(np.searchsorted(cum, rng.random(), side="right"))
+        x = A[k] @ x + b[k]
+        pts[i] = x
+        
     return pts
 
+
 def main():
-    pts = levy_ifs()
-    pts = pts * 1j
-    x, y = np.real(pts), np.imag(pts)
+    pts = ifs_chaos(A, b, p)
+    x, y = pts[:, 0], pts[:, 1]
     fig, ax = plt.subplots(dpi=160)
     fig.patch.set_facecolor(bg)
     ax.set_facecolor(bg)
     ax.set_aspect('equal', adjustable='box')
     ax.axis('off')
     plt.margins(0)
-
-    h = (np.angle(pts) + np.pi) / (2*np.pi) 
-    ax.scatter(x, y, c=h, s=s, cmap='hsv', linewidths=0, rasterized=True)
+    
+    solid = (0.2, 0.9, 0.4, 0.7)
+    ax.scatter(x, y, s=s, color=solid, linewidths=0, rasterized=True)
     plt.show()
 
 
