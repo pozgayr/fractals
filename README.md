@@ -1,5 +1,5 @@
 # FRACTALS
-![Levy curve][levy_curve.png]
+![Levy curve](levy_curve.png)
 ## simple fractal playground for learning purposes
 # goals:
 1. make a fractal visualizer using mathplotlib and numpy 
